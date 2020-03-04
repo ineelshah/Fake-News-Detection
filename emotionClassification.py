@@ -132,3 +132,5 @@ obj = EmotionClassify()
 cl = obj.classifyTextTrain()
 
 classifyText(cl, "I love reading!")
+
+#Performance metrics need to be added
