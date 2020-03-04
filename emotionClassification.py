@@ -133,4 +133,6 @@ cl = obj.classifyTextTrain()
 
 classifyText(cl, "I love reading!")
 
+#This is only inital draft not the final product
 #Performance metrics need to be added
+#Cross validation and test dataset partitioning required
