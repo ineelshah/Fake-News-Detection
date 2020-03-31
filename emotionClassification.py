@@ -133,7 +133,7 @@ class EmotionClassify:
         #print(len(predictions))
         #print(len(actuals))
         #print(nltk.classify.accuracy(predictions, actuals)*100)
-        print("Accuracy :" accuracy_score(predictions, actuals)*100)
+        print("Accuracy :" + str(accuracy_score(predictions, actuals)*100))
         
     
     '''
