@@ -162,3 +162,4 @@ cl = obj.classifyTextTrain()  # trained Naive Bayes Classifier
 classifyText(cl, "I love reading!")
 
 #Due to an accuracy of approximately 50% we need a better classifier.
+#The EmotionClassificationRNN contains trained models for Ekman's and plutchik's emotion classification
