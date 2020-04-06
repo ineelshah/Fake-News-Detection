@@ -6,6 +6,8 @@ Created on Tue Mar  3 20:31:59 2020
 @author: virajdesai
 """
 
+import re
+
 def wordCount(content):
     wordCount,outside,inside = 0, 0, 1
     state = outside
@@ -50,6 +52,12 @@ def capitalLetterCount(content):
 def questionMarkCount(content):
     return characterCount(content, '?')   
  
+def capitalWordCount(content):
+    capitalCount = 0
+    regex = '\s+[A-Z][A-Z]+\s|^[A-Z][A-Z]+.|\s+[A-Z][A-Z]+.|^[A-Z][A-Z]+:|\s+[A-Z][A-Z]+:|^[A-Z][A-Z]+,|\s+[A-Z][A-Z]+,'
+    words = re.findall(regex, content)
+    capitalCount = len(words)
+    return capitalCount
 
 def wordify(content):
     return content.split(' ')
@@ -86,6 +94,8 @@ def displayLinguistics(content):
     print("Negations used: " + str(nc))
     fc = firstPersonPronounCount(content)
     print("First person pronouns present: " + str(fc))
+    cwc = capitalWordCount(content)
+    print("Capital Words present: " + str(cwc))
 
 
 st = '''Apart from counting words and characters, our online editor can help you to improve word choice and writing style, and, optionally, help you to detect grammar mistakes and plagiarism. To check word count, simply place your cursor into the text box above and start typing. You'll see the number of characters and words increase or decrease as you type, delete, and edit them. You can also copy and paste text from another program over into the online editor above. The Auto-Save feature will make sure you won't lose any changes while editing, even if you leave the site and come back later. Tip: Bookmark this page now.
