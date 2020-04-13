@@ -72,7 +72,7 @@ class EmotionPredictor:
         indices = self._tweet_to_indices(tweets)
         predictions = self.model.predict(indices, verbose=False)
 
-        df = pd.DataFrame({'Tweet': tweets})
+        df = pd.DataFrame({'Text': tweets})
         if self.setting == 'mc':
             df['Emotion'] = [self.class_values[i] for i in
                         predictions.argmax(axis=-1)]
@@ -96,7 +96,7 @@ class EmotionPredictor:
         indices = self._tweet_to_indices(tweets)
         embeddings = self.embeddings_model(indices)
 
-        df = pd.DataFrame({'Tweet': tweets})
+        df = pd.DataFrame({'Text': tweets})
         for index, values in enumerate(embeddings.T, start=1):
             df['Dim{}'.format(index)] = values
         return df
