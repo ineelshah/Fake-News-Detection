@@ -36,7 +36,7 @@ def preprocessInput(headline, content=''):
         tokenizer = pickle.load(handle)
         print("Loaded tokenizer from disk")
 
-    text = [[headline + content]]
+    text = [headline + content]
     sequence = tokenizer.texts_to_sequences(text)
     text = pad_sequences(sequence, maxlen=MAX_SEQUENCE_LENGTH)
 
