@@ -7,47 +7,83 @@ Original file is located at
     https://colab.research.google.com/drive/1qucIi4mBsHDLfFn2NBBfdyHwwEq-WsEb
 """
 
-# Commented out IPython magic to ensure Python compatibility.
-# %tensorflow_version 1.14
-
-#importing libraries
-from keras.utils.vis_utils import plot_model
-from keras.models import Model
-from numpy import array
-from numpy import asarray
-from numpy import zeros
-from keras.preprocessing.text import Tokenizer
-from keras.preprocessing.sequence import pad_sequences
-from keras.models import Sequential
-from keras.layers import Dense, Input, Activation
-from keras.layers import Flatten, BatchNormalization, Concatenate, add
-from keras.layers import Embedding, Dropout, Conv1D, MaxPooling1D, Conv2D
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from keras.layers.merge import concatenate
-
-
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
 
 #Loading the data in a dataframe
 df = pd.read_csv('drive/My Drive/The_Research/all_data_refined_v2.csv')
 df['text'][3]
 
-import statistics as st
-import matplotlib.pyplot as plt
+X = ['politics', 'tech', 'business', 'entertainment', 'sport', 'others']
+Y = [cat_dict_real['politics'],cat_dict_real['tech'],cat_dict_real['business'],cat_dict_real['entertainment'],cat_dict_real['sport'],cat_dict_real['others']]
+Z = [cat_dict_fake['politics'],cat_dict_fake['tech'],cat_dict_fake['business'],cat_dict_fake['entertainment'], cat_dict_fake['sport'],cat_dict_fake['others']]
 
-cat_dict = {'politics':0, 'tech':0, 'business':0, 'others':0, 'entertainment':0, 'sport':0}
-cat_perc = {'politics':0, 'tech':0, 'business':0, 'others':0, 'entertainment':0, 'sport':0}
+for i in range(len(Y)):
+  Y[i] = round(Y[i], 2)
+  Z[i] = round(Z[i], 2)
 
-for i in range(len(df)):
-  cat_dict[df['category'][i]] += 1
+x = np.arange(len(X))  # the label locations
+width = 0.35  # the width of the bars
 
-for cat in cat_perc:
-  cat_perc[cat] = (cat_dict[cat] / 20015)*100
+fig, ax = plt.subplots()
+rects1 = ax.bar(x - width/2, Y, width, label='Real')
+rects2 = ax.bar(x + width/2, Z, width, label='Fake')
 
-plt.bar(['politics', 'tech', 'business', 'others', 'entertainment', 'sport'],[cat_perc['politics'],cat_perc['tech'],cat_perc['business'],cat_perc['others'],cat_perc['entertainment'],cat_perc['sport']], color='green')
-plt.xlabel("Category Of News")
-plt.ylabel("Percent Of Articles")
-plt.title("Statistics For Category Of News")
-plt.savefig('Category_2.png', dpi = 400)
+# Add some text for labels, title and custom x-axis tick labels, etc.
+ax.set_ylabel('Percentage')
+ax.set_title('Percent of Fake and Real News by Category')
+ax.set_xticks(x)
+ax.set_xticklabels(X)
+ax.legend()
+
+
+def autolabel(rects):
+    for rect in rects:
+        height = rect.get_height()
+        ax.annotate('{}'.format(height),
+                    xy=(rect.get_x() + rect.get_width() / 2, height),
+                    xytext=(0, 3),  # 3 points vertical offset
+                    textcoords="offset points",
+                    ha='center', va='bottom')
+
+
+autolabel(rects1)
+autolabel(rects2)
+
+fig.tight_layout()
+
 plt.show()
+fig.savefig('category_4_with_labels.png', dpi = 400)
+
+X = ['politics', 'tech', 'business', 'entertainment', 'sport', 'others']
+Y = [cat_dict_real['politics'],cat_dict_real['tech'],cat_dict_real['business'],cat_dict_real['entertainment'],cat_dict_real['sport'],cat_dict_real['others']]
+Z = [cat_dict_fake['politics'],cat_dict_fake['tech'],cat_dict_fake['business'],cat_dict_fake['entertainment'], cat_dict_fake['sport'],cat_dict_fake['others']]
+
+for i in range(len(Y)):
+  Y[i] = round(Y[i], 2)
+  Z[i] = round(Z[i], 2)
+
+x = np.arange(len(X))  # the label locations
+width = 0.5  # the width of the bars
+
+fig, ax = plt.subplots()
+rects1 = ax.bar(x, Y, width, label='Real News')
+
+# Add some text for labels, title and custom x-axis tick labels, etc.
+ax.set_ylabel('Percentage')
+ax.set_title('Percent of Real News by Category')
+ax.set_xticks(x)
+ax.set_xticklabels(X)
+ax.legend()
+
+
+
+autolabel(rects1)
+
+fig.tight_layout()
+
+plt.show()
+fig.savefig('category_5_Real.png', dpi = 400)
 
