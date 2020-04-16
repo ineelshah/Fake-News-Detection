@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 def readCsvFile(path):
 	df = pd.read_csv(path, encoding='utf-8')
 	input_df = df.filter(['id', 'published', 'type', 'category'])
+    return input_df
 
 #cleaning published column
 def cleanPublished(input_df):
@@ -21,6 +22,7 @@ def cleanPublished(input_df):
 		else:
 			timestamps.append(input_df.iloc[i]['published']) 
 	input_df['published'] = timestamps
+    return input_df
 
 # returns DF with articles within window
 def lookbackWindowDF(windowSize, currentDate, input_df):
@@ -142,35 +144,51 @@ def slidingWindow(windowSize,minDate,maxDate,input_df,categoryName):
     current = datetime.strptime(currentDate,"%Y-%m-%d")
     limit = minValue + timedelta(days=windowSize)
     results = []
-    while(current>=limit):
+    while(current>=minValue):
         currentDate = datetime.strftime(current,"%Y-%m-%d")
         sub_df = lookbackWindowDF(windowSize, currentDate, input_df)
         fraction = categoryFractionDF(sub_df, categoryName)
-        results.append([fraction,fakenessOfCategoryDF(input_df, categoryName)])
+        results.append([fraction,fakenessOfCategoryDF(sub_df, categoryName)])
         current = current - timedelta(days=windowSize)
     return results
 
 #Plotting charts
-def drawPlot(X,Y,plotType):
+def drawPlot(X,Y,plotType,windowSize,categoryName):
 	fig, ax = plt.subplots()
 	if(plotType=='scatter'):
-		ax.scatter(X, Y, label='Scatter Plot Trend')
+		ax.scatter(X, Y, label='Trend')
 	else:
-		ax.plot(X, Y, label='Line Chart Trend')
+		ax.plot(X, Y, label='Trend')
 	# Add some text for labels, title and custom x-axis labels, etc.
 	ax.set_xlabel('Trend Fraction')
 	ax.set_ylabel('Fake Fraction')
-	ax.set_title('Fake Fraction v/s Trend Fraction')
+	ax.set_title('Fake Fraction v/s Trend Fraction for '+categoryName+' category')
 	ax.legend()
 	fig.tight_layout()
 	plt.show()
-	filename = 'Enhancer_Graph_+'+categoryName+plotType+'.png'
+	filename = categoryName+plotType+str(windowSize)+'.png'
 	fig.savefig(filename, dpi = 400)
 
+#draw both scatter and line charts for all categories with different window sizes
+def drawAllPlots(input_df):
+    minDate,maxDate=minmaxPublishedDate(input_df)
+    for i in ['business', 'politics', 'sport', 'entertainment', 'tech']:
+        for j in [3,5,7,9]:
+            points = slidingWindow(j,minDate,maxDate,input_df,i)
+            X,Y=[],[]
+            for point in points:
+                X.append(point[0])
+                Y.append(point[1])
+            print(X)
+            print(Y)
+            drawPlot(X,Y,'scatter',j,i)
+            drawPlot(X,Y,'line',j,i)
+    
 #driver
 if __name__ == "__main__":
 	path = '../Datasets/Working_Data/all_data_refined_v2.csv'
 	input_df = readCsvFile(path)
+    input_df = cleanPublished(input_df)
 	currentDate = "2016-11-15"
 	windowSize = 7
 	categoryName = "politics"
@@ -181,7 +199,7 @@ if __name__ == "__main__":
 		X.append(point[0])
 		Y.append(point[1])
 	plotType = 'scatter'
-	drawPlot(X,Y,plotType)
+	drawPlot(X,Y,plotType,windowSize,categoryName)
 
 
 
