@@ -11,6 +11,7 @@ Original file is located at
 
 import pandas as pd
 import re
+import Linguistics
 
 def wordCount(content):
     wordCount,outside,inside = 0, 0, 1
