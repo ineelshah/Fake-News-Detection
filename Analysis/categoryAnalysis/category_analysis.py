@@ -14,15 +14,48 @@ import numpy as np
 
 #Loading the data in a dataframe
 df = pd.read_csv('drive/My Drive/The_Research/all_data_refined_v2.csv')
-df['text'][3]
+
+# MULTICATEGORY GRAPHS/CHARTS:
+
+# Counting total fake and real articles
+
+fake_count = len(df[df['type'] == 'fake'])
+real_count = len(df[df['type'] == 'real'])
+
+# CAtegory wise dictionaries
+
+cat_dict = {'politics':0, 'tech':0, 'business':0, 'others':0, 'entertainment':0, 'sport':0}
+cat_perc = {'politics':0, 'tech':0, 'business':0, 'others':0, 'entertainment':0, 'sport':0}
+cat_dict_real = {'politics':0, 'tech':0, 'business':0, 'others':0, 'entertainment':0, 'sport':0}
+cat_dict_fake = {'politics':0, 'tech':0, 'business':0, 'others':0, 'entertainment':0, 'sport':0}
+
+
+# Assigning values to dictionaries based on numbers
+
+for i in range(len(df)):
+  cat_dict[df['category'][i]] += 1
+  if df['type'][i] == 'real': cat_dict_real[df['category'][i]] += 1
+  elif df['type'][i] == 'fake': cat_dict_fake[df['category'][i]] += 1
+
+# Assigning values based on percentage
+
+for cat in cat_perc:
+  cat_perc[cat] = (cat_dict[cat] / 20015)*100
+  cat_dict_real[cat] = (cat_dict_real[cat]/real_count)*100
+  cat_dict_fake[cat] = (cat_dict_fake[cat]/fake_count)*100
+
+#Assigning the lists to be analyzed
 
 X = ['politics', 'tech', 'business', 'entertainment', 'sport', 'others']
 Y = [cat_dict_real['politics'],cat_dict_real['tech'],cat_dict_real['business'],cat_dict_real['entertainment'],cat_dict_real['sport'],cat_dict_real['others']]
 Z = [cat_dict_fake['politics'],cat_dict_fake['tech'],cat_dict_fake['business'],cat_dict_fake['entertainment'], cat_dict_fake['sport'],cat_dict_fake['others']]
 
+# Rounding-off the values
+
 for i in range(len(Y)):
   Y[i] = round(Y[i], 2)
   Z[i] = round(Z[i], 2)
+
 
 x = np.arange(len(X))  # the label locations
 width = 0.35  # the width of the bars
@@ -32,6 +65,7 @@ rects1 = ax.bar(x - width/2, Y, width, label='Real')
 rects2 = ax.bar(x + width/2, Z, width, label='Fake')
 
 # Add some text for labels, title and custom x-axis tick labels, etc.
+
 ax.set_ylabel('Percentage')
 ax.set_title('Percent of Fake and Real News by Category')
 ax.set_xticks(x)
@@ -55,7 +89,9 @@ autolabel(rects2)
 fig.tight_layout()
 
 plt.show()
-fig.savefig('category_4_with_labels.png', dpi = 400)
+fig.savefig('category_wise_type_wise_percent.png', dpi = 400)
+
+# SINGLE CATEGORY GRAPHS/CHARTS:
 
 X = ['politics', 'tech', 'business', 'entertainment', 'sport', 'others']
 Y = [cat_dict_real['politics'],cat_dict_real['tech'],cat_dict_real['business'],cat_dict_real['entertainment'],cat_dict_real['sport'],cat_dict_real['others']]
@@ -86,4 +122,27 @@ fig.tight_layout()
 
 plt.show()
 fig.savefig('category_5_Real.png', dpi = 400)
+
+# PLOTTING GRAPHS: (NOT FOR BAR CHARTS):
+
+
+X = [1, 2] # Fake Fraction
+Y = [1, 2] # Trend Fraction
+
+
+
+
+fig, ax = plt.subplots()
+ax.plot(X, Y, label='Real News')
+
+# Add some text for labels, title and custom x-axis labels, etc.
+ax.set_xlabel('Fake Fraction')
+ax.set_ylabel('Trend Fraction')
+ax.set_title('Fake Fraction v/s Trend Fraction')
+ax.legend()
+
+fig.tight_layout()
+
+plt.show()
+fig.savefig('Enhancer_Graph_1.png', dpi = 400)
 
