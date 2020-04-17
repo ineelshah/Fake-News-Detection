@@ -1,6 +1,7 @@
 # import SentimentIntensityAnalyzer class 
 # from vaderSentiment.vaderSentiment module. 
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer 
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+#from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer 
 
 # function to print sentiments 
 # of the sentence. 
