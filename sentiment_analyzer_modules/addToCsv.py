@@ -46,8 +46,8 @@ def addSentimentCategory(input_df):
 
 if __name__ == "__main__" : 
 	input_df = pd.read_csv('../Datasets/Working_Data/all_data_refined_v4.csv', encoding='utf-8')
-	#input_df = addsentenceCount(input_df)
-	#input_df = addsentiments(input_df)
+	input_df = addsentenceCount(input_df)
+	input_df = addsentiments(input_df)
 	input_df = addSentimentCategory(input_df)
 	input_df.to_csv(r'../Datasets/Working_Data/all_data_refined_v3.csv', index = False)
 
