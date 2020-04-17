@@ -32,10 +32,22 @@ def addsentenceCount(input_df):
 	input_df['sentence_Count'] = sentences
 	return input_df
 
-if __name__ == "__main__" : 
-	input_df = pd.read_csv('../Datasets/Working_Data/all_data_refined_v3.csv', encoding='utf-8')
-	input_df = addsentenceCount(input_df)
-	input_df = addsentiments(input_df)
-	input_df.to_csv(r'../Datasets/Working_Data/all_data_refined_v4.csv', index = False)
+def addSentimentCategory(input_df):
+	sentimentCategory = []
+	for i in range(len(input_df['text'])):
+		if(input_df.iloc[i]['neg']>input_df.iloc[i]['pos']):
+			sentimentCategory.append('negative')
+		elif(input_df.iloc[i]['pos']>input_df.iloc[i]['neg']):
+			sentimentCategory.append('positive')
+		else:
+			sentimentCategory.append('neutral')
+	input_df['sentimentCategory'] = sentimentCategory
+	return input_df
 
+if __name__ == "__main__" : 
+	input_df = pd.read_csv('../Datasets/Working_Data/all_data_refined_v4.csv', encoding='utf-8')
+	#input_df = addsentenceCount(input_df)
+	#input_df = addsentiments(input_df)
+	input_df = addSentimentCategory(input_df)
+	input_df.to_csv(r'../Datasets/Working_Data/all_data_refined_v3.csv', index = False)
 
