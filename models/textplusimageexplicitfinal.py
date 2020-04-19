@@ -43,6 +43,7 @@ from sklearn.model_selection import train_test_split
 MAX_LEN = 2000 
 VOCAB_SIZE = 0
 IMAGE_DIR = ''
+TEST_SIZE = 0.1
 
 def text_implict_preprocessing(texts):
     # initialize tokenizer
@@ -113,7 +114,7 @@ encoder.fit(Y)
 Y = encoder.transform(Y)
 
 # Split the dataset
-X_train, X_valid, Y_train, Y_valid=train_test_split(X, Y, test_size=0.3, random_state=15)
+X_train, X_valid, Y_train, Y_valid=train_test_split(X, Y, test_size=TEST_SIZE, random_state=15)
 
 print(X_train.shape)
 print(X_valid.shape)
@@ -193,7 +194,7 @@ print("____________________")
 print(model.summary())
 print("____________________")
 
-plot_model(model, show_shapes=True, to_file='multichannelbeta.png')
+plot_model(model, show_shapes=True, to_file='textPlusImageExplicitModelArchitecture.png')
 
 # fit the model
 print("Fitting")
@@ -202,10 +203,10 @@ print("Fitted")
 
 
 model_json = model.to_json()
-with open("textModel.json", "w") as json_file:
+with open("drive/My Drive/models/textPlusImageExplicitModel.json", "w") as json_file:
     json_file.write(model_json)
 # serialize weights to HDF5
-model.save_weights("textModel.h5")
+model.save_weights("drive/My Drive/models/textPlusImageExplicitModel.h5")
 print("Saved model to disk")
 
 
@@ -233,7 +234,7 @@ def finalOutputWithDelta(delta = 0.0):
 
   print("error: ", error)
   print(output)
-  print(correct/2291)
+  print(correct/(TEST_SIZE*6940))
 
 finalOutputWithDelta()
 
@@ -245,7 +246,10 @@ plt.title('model accuracy')
 plt.ylabel('accuracy')
 plt.xlabel('epoch')
 plt.legend(['train', 'validation'], loc='upper left')
+plt.savefig('drive/My Drive/models/textPlusImageExplicitModelAccuracy.png')
 plt.show()
+
+
 # summarize history for loss
 plt.plot(history.history['loss'])
 plt.plot(history.history['val_loss'])
@@ -253,8 +257,10 @@ plt.title('model loss')
 plt.ylabel('loss')
 plt.xlabel('epoch')
 plt.legend(['train', 'validation'], loc='upper left')
+plt.savefig('drive/My Drive/models/textPlusImageExplicitModelLoss.png')
 plt.show()
 
+'''
 # Loading the model:
 from keras.models import Sequential
 from keras.layers import Dense
@@ -266,14 +272,14 @@ import os
 def loadModelAndPredict():
 
   #load json
-  json_file = open('textModel.json', 'r')
+  json_file = open('textPlusImageExplicitModel.json', 'r')
   loaded_model_json = json_file.read()
   json_file.close()
   loaded_model = model_from_json(loaded_model_json)
   print("Loaded json from disk")
 
   # load weights into new model
-  loaded_model.load_weights("textModel.h5")
+  loaded_model.load_weights("textPlusImageExplicitModel.h5")
   print("Loaded model from disk")
 
   loaded_model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics= ['accuracy', 'mse'])
@@ -289,4 +295,5 @@ metric_name, metric_score = loadModelAndPredict()
 
 
 print("%s: %.2f%%" % (metric_name[1], metric_score[1]*100))
+'''
 
