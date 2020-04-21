@@ -1,11 +1,9 @@
-import enhancer
+from TemporalInterpreter import enhancer
 import pandas as pd
 
 def loadData(path):
-	datasetPath = '../Datasets/Working_Data/all_data_refined_v2.csv'
-	input_df = enhancer.readCsvFile(datasetPath)
-	instance_df = enhancer.readCsvFile(path)
-	return [input_df, instance_df]
+	input_df = enhancer.readCsvFile(path)
+	return input_df
 
 def processing(input_df, instance_df, windowSize):
 	input_df = enhancer.cleanPublished(input_df)
@@ -15,7 +13,7 @@ def processing(input_df, instance_df, windowSize):
 	actual_df = enhancer.lookbackWindowDF(windowSize, currentDate, input_df)
 	return [input_df,instance_df,actual_df]
 
-def calculateDelta(actual_df, windowSize, correlationMatrix, trendThreshold):
+def calculateDelta(actual_df, windowSize, correlationMatrix, trendThreshold, categoryName):
 	trendFraction = enhancer.categoryFractionDF(actual_df, categoryName)
 	if(trendFraction<trendThreshold):
 		return 0.0
@@ -41,7 +39,7 @@ def newRanges(originalRanges, delta):
 			originalRanges[i][1]+=delta
 	return originalRanges
 
-def findResults(path, windowSize):
+def findResults(instance_df, windowSize):
 	correlationMatrix = {
 		'business':{3:0.082, 5:0.021, 7:0.203, 9:0.367},
 		'politics':{3:-0.938, 5:-0.941, 7:-0.943, 9:-0.941},
@@ -56,10 +54,12 @@ def findResults(path, windowSize):
 		'likelyReal':[0.60,0.80],
 		'mostlyReal':[0.80,1.00]
 	}
+	datasetPath = '../Datasets/Working_Data/all_data_refined_v5.csv'
+	input_df = loadData(datasetPath)
 	trendThreshold = 0.3
-	input_df, instance_df = loadData(path)
 	input_df, instance_df, actual_df = processing(input_df,instance_df,windowSize)
-	delta = calculateDelta(actual_df,windowSize,correlationMatrix,trendThreshold)
+	categoryName = instance_df.iloc[0]['category']
+	delta = calculateDelta(actual_df,windowSize,correlationMatrix,trendThreshold, categoryName)
 	ranges = newRanges(originalRanges, delta)
 	# call function which returns the result of TI-CNN model
 	result = 0.4 
@@ -72,13 +72,13 @@ def findCategory(ranges, result):
 			return i
 
 #predict final result category
-def predictCategory(path, windowSize):
-	results = findResults(path, windowSize)
+def predictCategory(instance_df, windowSize):
+	results = findResults(instance_df, windowSize)
 	return results['resultCategory']
 
 #predict actual probability of trueness
-def predictProbability(path,windowSize):
-	results = findResults(path, windowSize)
+def predictProbability(instance_df,windowSize):
+	results = findResults(instance_df, windowSize)
 	value = results['ti-cnn']+results['delta']
 	if(value<-0.0):
 		return 0.0
@@ -90,8 +90,9 @@ def predictProbability(path,windowSize):
 if __name__ == "__main__":
 	path = '../Datasets/Working_Data/sample.csv'
 	windowSize = 7
-	print(predictProbability(path,windowSize))
-	print(predictCategory(path,windowSize))
+	instance_df = loadData(path)
+	print(predictProbability(instance_df,windowSize))
+	print(predictCategory(instance_df,windowSize))
 
 
 
