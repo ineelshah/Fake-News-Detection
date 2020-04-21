@@ -14,6 +14,101 @@ import random
 from datetime import date
 
 
+def wordCount(content):
+    wordCount,outside,inside = 0, 0, 1
+    state = outside
+    for i in content:
+        if (i == ' ' or i == '\n' or i == '\t'):
+            state = outside
+        elif state == outside:
+            state = inside
+            wordCount += 1
+    return wordCount
+
+def averageWordCount(content):
+    count = wordCount(content)
+    sentences, outside, inside = 0, 0, 1
+    state = outside
+    for i in content:
+        if (i == '.' or i == '!' or i == '?' or i == '...'):
+            state = outside
+        elif state == outside:
+            state = inside
+            sentences += 1
+    averageWords = count/sentences
+    return averageWords
+
+def characterCount(content, character):
+    count = 0
+    for i in content:
+        if i == character:
+            count += 1
+    return count
+
+def exclamationMarkCount(content):
+    return characterCount(content, '!')
+
+def capitalLetterCount(content):
+    totalCount = 0
+    alphabets = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    for i in alphabets:
+        totalCount += characterCount(content, i)
+    return totalCount
+    
+def questionMarkCount(content):
+    return characterCount(content, '?')   
+ 
+def capitalWordCount(content):
+    capitalCount = 0
+    regex = '\s+[A-Z][A-Z]+\s|^[A-Z][A-Z]+.|\s+[A-Z][A-Z]+.|^[A-Z][A-Z]+:|\s+[A-Z][A-Z]+:|^[A-Z][A-Z]+,|\s+[A-Z][A-Z]+,'
+    words = re.findall(regex, content)
+    capitalCount = len(words)
+    return capitalCount
+
+def wordify(content):
+    return content.split(' ')
+
+def wordwiseCount(content, finderWords):
+    count = 0
+    wordList = wordify(content)
+    for i in wordList:
+        if i in finderWords:
+            count += 1
+    return count
+
+def negationCount(content):
+    negations = ["do not", "don't", "does not", "doesn't", "am not", "are not", "aren't", "is not", "isn't", "did not", "didn't", "have not", "haven't", "had not", "hadn't", "should not", "shouldn't", "would not", "wouldn't", "will not", "won't"]
+    return wordwiseCount(content.lower(), negations)
+
+def firstPersonPronounCount(content):
+    pronounsList = ["I", "me", "we", "us", "my", "mine", "our", "ours"]
+    return wordwiseCount(content.lower(), pronounsList)
+
+
+def clean(text):
+    cleaned_txt = re.sub('<[A-Za-z0-9+]*>', "", text)
+    return cleaned_txt
+
+def displayLinguistics(content):
+    wc = wordCount(content)
+    print("Word count: " + str(wc))
+    awc = averageWordCount(content)
+    print("Average word count: " + str(awc))
+    ec = exclamationMarkCount(content)
+    print("Exclamation marks present: " + str(ec))
+    cc = capitalLetterCount(content)
+    print("Capital letters present: " + str(cc))
+    qc = questionMarkCount(content)
+    print("Question marks present: " + str(qc))
+    nc = negationCount(content)
+    print("Negations used: " + str(nc))
+    fc = firstPersonPronounCount(content)
+    print("First person pronouns present: " + str(fc))
+    cwc = capitalWordCount(content)
+    print("Capital Words present: " + str(cwc))
+
+
+
 def applyLinguistics(input_df):
 
   output_df = input_df
@@ -90,7 +185,7 @@ def processOnDf(df_in):
 
 def processOnNewInput(id = 0, published = date.today(), text = "NA", title = 'notitle', language = 'english', uuid = 123456789, main_img_url = 'NULL'):
   df = pd.DataFrame()
-  df = df.append({'id' : id, 'published' : str(published), 'text' : text, 'title' : title, 'language' : language, 'uuid' : uuid, 'main_img_url' : main_img_url}, ignore_index=True)
+  df = df.append({'id' : id, 'language' : language, 'main_img_url' : main_img_url, 'published' : str(published), 'text' : text, 'title' : title , 'type' : 'real', 'uuid' : uuid, }, ignore_index=True)
   df = applyLinguistics(df)
   return df
 
